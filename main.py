@@ -36,10 +36,22 @@ def read_setup(setup_file) -> AccSetup:
 
 
 def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
-    setup_params = {}
-    setup_params.update(
-            **build_diffs_by_tire_pos('psi', extract_path(setup_params_raw, 'basicSetup', 'tyres', 'tyrePressure')),
-            **build_diffs_by_tire_pos('toe', extract_path(setup_params_raw, 'basicSetup', 'alignment', 'toe')))
+    setup_params = {
+        **build_diffs_by_tire_pos('psi', extract_path(setup_params_raw, 'basicSetup', 'tyres', 'tyrePressure')),
+        **build_diffs_by_tire_pos('toe', extract_path(setup_params_raw, 'basicSetup', 'alignment', 'toe')),
+        'ARB F': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'aRBFront'),
+        'ARB R': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'aRBRear'),
+        **build_diffs_by_tire_pos('wheelRate', extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance',
+                                                            'wheelRate')),
+        **build_diffs_by_tire_pos('bumpUp', extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance',
+                                                            'bumpStopRateUp')),
+        **build_diffs_by_tire_pos('bumpDn', extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance',
+                                                            'bumpStopRateDn')),
+        **build_diffs_by_tire_pos('bumpRng', extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance',
+                                                            'bumpStopWindow')),
+        'Break TQ': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'brakeTorque'),
+        'Break Bias': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'brakeBias'),
+    }
 
     return pd.DataFrame.from_dict(setup_params, columns=['values'], orient='index')
 
