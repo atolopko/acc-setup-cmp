@@ -1,9 +1,7 @@
 import dataclasses
 import json
 import os
-import subprocess
 import sys
-from tempfile import TemporaryFile, NamedTemporaryFile
 from typing import List, Dict
 
 import numpy as np
@@ -48,8 +46,8 @@ def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
         'ABS': extract_path(setup_params_raw, 'basicSetup', 'electronics', 'abs'),
         'Eng Map': extract_path(setup_params_raw, 'basicSetup', 'electronics', 'eCUMap'),
         'Fuel': extract_path(setup_params_raw, 'basicSetup', 'strategy', 'fuel'),
-        'Bk Cmp F': extract_path(setup_params_raw, 'basicSetup', 'strategy', 'frontBrakePadCompound'),
-        'Bk Cmp R': extract_path(setup_params_raw, 'basicSetup', 'strategy', 'rearBrakePadCompound'),
+        'Brk Cmpnd F': extract_path(setup_params_raw, 'basicSetup', 'strategy', 'frontBrakePadCompound'),
+        'Brk Cmpnd R': extract_path(setup_params_raw, 'basicSetup', 'strategy', 'rearBrakePadCompound'),
 
         'ARB F': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'aRBFront'),
         'ARB R': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'aRBRear'),
