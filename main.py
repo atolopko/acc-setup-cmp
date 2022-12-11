@@ -1,7 +1,9 @@
 import dataclasses
 import json
 import os
+import subprocess
 import sys
+from tempfile import TemporaryFile, NamedTemporaryFile
 from typing import List, Dict
 
 import numpy as np
@@ -78,7 +80,7 @@ def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
         'Brake Duct R': extract_path(setup_params_raw, 'advancedSetup', 'drivetrain', 'preload'),
     }
 
-    return pd.DataFrame.from_dict(setup_params, columns=['values'], dtype=np.float, orient='index')
+    return pd.DataFrame.from_dict(setup_params, columns=['values'], dtype=float, orient='index')
 
 
 def extract_path(d, *path, missing=None):
@@ -121,4 +123,11 @@ def keep_only_deltas(cmp: DataFrame):
 if __name__ == '__main__':
     setup_a_file, setup_b_file = sys.argv[1:3]
     # print(keep_only_deltas(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))))
-    print(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file)))
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.float_format', '{:,.1f}'.format)
+    comparison = compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))
+    with NamedTemporaryFile(mode='w', suffix='.html', delete=False) as html:
+        html.file.write(comparison.to_html())
+        html.file.flush()
+        subprocess.call(['open', html.name])
+
