@@ -183,10 +183,7 @@ def test_compare_setup_params():
     result = compare_setups(setup_a, setup_b)
 
     assert result.dropna().to_dict(orient='index') == \
-           {
-               'PSI FL': {'a': 50.0, 'b': 51.0, 'delta': 1.0},
-               'PSI FR': {'a': 57.0, 'b': 58.0, 'delta': 1.0},
-               'PSI RL': {'a': 47.0, 'b': 48.0, 'delta': 1.0},
-               'PSI RR': {'a': 57.0, 'b': 58.0, 'delta': 1.0},
-           }
-
+           {'PSI FL': {('a', 'value'): 50.0, ('b', 'delta'): 1.0, ('b', 'value'): 51.0},
+            'PSI FR': {('a', 'value'): 57.0, ('b', 'delta'): 1.0, ('b', 'value'): 58.0},
+            'PSI RL': {('a', 'value'): 47.0, ('b', 'delta'): 1.0, ('b', 'value'): 48.0},
+            'PSI RR': {('a', 'value'): 57.0, ('b', 'delta'): 1.0, ('b', 'value'): 58.0}}

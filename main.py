@@ -106,9 +106,13 @@ def compare_setup_params(setup_a: DataFrame, setup_b: DataFrame) -> DataFrame:
 def compare_setups(setup_a: AccSetup, setup_b: AccSetup):
     cmp = compare_setup_params(setup_a.params, setup_b.params)
     cmp['delta'] = cmp.iloc[:, 1] - cmp.iloc[:, 0]
-    cmp.columns = [setup_file_short_name(setup_a),
-                   setup_file_short_name(setup_b),
-                   'delta']
+    cmp.columns = pd.MultiIndex.from_tuples(tuples=[
+        (setup_file_short_name(setup_a), 'value'),
+        # (setup_file_short_name(setup_a), 'delta'),
+        (setup_file_short_name(setup_b), 'value'),
+        (setup_file_short_name(setup_b), 'delta')
+    ],
+            names=['setup', 'value'])
     return cmp
 
 
@@ -117,17 +121,19 @@ def setup_file_short_name(setup_a):
 
 
 def keep_only_deltas(cmp: DataFrame):
-    return cmp[cmp.delta != 0]
+    return cmp[cmp.iloc[:, 2] != 0]
 
 
 if __name__ == '__main__':
     setup_a_file, setup_b_file = sys.argv[1:3]
-    # print(keep_only_deltas(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))))
     pd.set_option('display.max_rows', None)
     pd.set_option('display.float_format', '{:,.1f}'.format)
     comparison = compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))
-    with NamedTemporaryFile(mode='w', suffix='.html', delete=False) as html:
-        html.file.write(comparison.to_html())
-        html.file.flush()
-        subprocess.call(['open', html.name])
+
+    print(keep_only_deltas(comparison))
+
+    # with NamedTemporaryFile(mode='w', suffix='.html', delete=False) as html:
+    #     html.file.write(comparison.to_html(border='{border-style: solid; border-width: 1px;}'))
+    #     html.file.flush()
+    #     subprocess.call(['open', html.name])
 
