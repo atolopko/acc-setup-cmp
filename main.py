@@ -30,7 +30,7 @@ def read_setup(setup_file) -> AccSetup:
     with open(setup_file, 'rt') as f:
         setup_params_raw = json.load(f)
 
-    return AccSetup(setup_file, parse_setup_params(setup_params_raw))
+    return AccSetup(setup_file.replace(' ', '_'), parse_setup_params(setup_params_raw))
 
 
 def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
@@ -78,7 +78,7 @@ def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
         'Brake Duct R': extract_path(setup_params_raw, 'advancedSetup', 'drivetrain', 'preload'),
     }
 
-    return pd.DataFrame.from_dict(setup_params, columns=['values'], dtype=float, orient='index')
+    return pd.DataFrame.from_dict(setup_params, columns=['value'], dtype=float, orient='index')
 
 
 def extract_path(d, *path, missing=None):
@@ -101,20 +101,17 @@ def compare_setup_params(setup_a: DataFrame, setup_b: DataFrame) -> DataFrame:
     return cmp
 
 
-def compare_setups(setup_a: AccSetup, setup_b: AccSetup):
-    cmp = compare_setup_params(setup_a.params, setup_b.params)
-    cmp['delta'] = cmp.iloc[:, 1] - cmp.iloc[:, 0]
-    cmp.columns = pd.MultiIndex.from_tuples(tuples=[
-        (setup_file_short_name(setup_a), 'value'),
-        # (setup_file_short_name(setup_a), 'delta'),
-        (setup_file_short_name(setup_b), 'value'),
-        (setup_file_short_name(setup_b), 'delta')
-    ],
-            names=['setup', 'value'])
-    return cmp
+def compare_setups(*setups: AccSetup):
+    values: pd.DataFrame = pd.concat([s.params for s in setups], axis=1,
+                                     keys=[setup_file_short_name(s) for s in setups])
+
+    deltas = pd.concat([pd.Series(s.params['value'], name='delta') - setups[0].params['value'] for s in setups[1:]],
+                       axis=1,
+                       keys=[(setup_file_short_name(s), 'delta') for s in setups[1:]])
+    return pd.concat([values, deltas], axis=1)
 
 
-def setup_file_short_name(setup_a):
+def setup_file_short_name(setup_a: AccSetup):
     return os.path.splitext(os.path.basename(setup_a.file_path))[0]
 
 
@@ -123,10 +120,12 @@ def keep_only_deltas(cmp: DataFrame):
 
 
 if __name__ == '__main__':
-    setup_a_file, setup_b_file = sys.argv[1:3]
+    setup_files = sys.argv[1:]
     pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
     pd.set_option('display.float_format', '{:,.1f}'.format)
-    comparison = compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))
+    comparison = compare_setups(*[read_setup(setup_file) for setup_file in setup_files])
 
     print(keep_only_deltas(comparison))
 

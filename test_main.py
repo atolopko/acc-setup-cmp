@@ -109,7 +109,7 @@ def test_parse_setup():
 
     setup = parse_setup_params(setup_params_raw)
 
-    assert setup.to_dict()['values'] == \
+    assert setup.to_dict()['value'] == \
            {'ABS': 4.0,
             'ARB F': 3.0,
             'ARB R': 2.0,
