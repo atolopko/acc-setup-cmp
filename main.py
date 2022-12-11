@@ -2,11 +2,10 @@ import dataclasses
 import json
 import os
 import sys
-from pprint import pp
 from typing import List, Dict
+
+import numpy as np
 import pandas as pd
-
-
 # @dataclasses.dataclass
 from pandas import DataFrame
 
@@ -53,7 +52,7 @@ def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
         'Break Bias': extract_path(setup_params_raw, 'advancedSetup', 'mechanicalBalance', 'brakeBias'),
     }
 
-    return pd.DataFrame.from_dict(setup_params, columns=['values'], orient='index')
+    return pd.DataFrame.from_dict(setup_params, columns=['values'], dtype=np.float, orient='index')
 
 
 def extract_path(d, *path):
@@ -95,4 +94,5 @@ def keep_only_deltas(cmp: DataFrame):
 
 if __name__ == '__main__':
     setup_a_file, setup_b_file = sys.argv[1:3]
-    print(keep_only_deltas(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))))
+    # print(keep_only_deltas(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file))))
+    print(compare_setups(read_setup(setup_a_file), read_setup(setup_b_file)))
