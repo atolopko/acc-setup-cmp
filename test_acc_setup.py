@@ -1,4 +1,4 @@
-from acc_setup import extract_path, build_diffs_by_tire_pos, parse_setup_params, AccSetup
+from acc_setup import extract_path, build_diffs_by_tire_pos, parse_setup_params
 
 
 def test_extract_path():

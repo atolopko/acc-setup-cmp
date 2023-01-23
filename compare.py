@@ -1,8 +1,9 @@
+import os
+
 import pandas as pd
 from pandas import DataFrame
 
 from acc_setup import AccSetup
-from main import setup_file_short_name
 
 
 def compare_setup_params(setup_a: DataFrame, setup_b: DataFrame) -> DataFrame:
@@ -22,3 +23,7 @@ def compare_setups(*setups: AccSetup):
 
 def keep_only_deltas(cmp: DataFrame):
     return cmp[cmp.iloc[:, 2] != 0]
+
+
+def setup_file_short_name(setup_a: AccSetup):
+    return os.path.splitext(os.path.basename(setup_a.file_path))[0]

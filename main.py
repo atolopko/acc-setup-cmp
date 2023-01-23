@@ -1,15 +1,9 @@
-import os
 import sys
 
 import pandas as pd
 
-from acc_setup import read_setup, AccSetup
+from acc_setup import read_setup
 from compare import compare_setups, keep_only_deltas
-
-
-def setup_file_short_name(setup_a: AccSetup):
-    return os.path.splitext(os.path.basename(setup_a.file_path))[0]
-
 
 if __name__ == '__main__':
     setup_files = sys.argv[1:]
