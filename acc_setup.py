@@ -73,7 +73,7 @@ def parse_setup_params(setup_params_raw: Dict) -> DataFrame:
         'F Splitter': extract_path(setup_params_raw, 'advancedSetup', 'aeroBalance', 'splitter'),
         'Brake Duct F': extract_path(setup_params_raw, 'advancedSetup', 'aeroBalance', 'brakeDuct', missing=[np.nan] * 2)[1],
         'Brake Duct R': extract_path(setup_params_raw, 'advancedSetup', 'aeroBalance', 'brakeDuct', missing=[np.nan] * 2)[0],
-        'Brake Duct R': extract_path(setup_params_raw, 'advancedSetup', 'drivetrain', 'preload'),
+        'Diff Preload': extract_path(setup_params_raw, 'advancedSetup', 'drivetrain', 'preload'),
     }
 
     return pd.DataFrame.from_dict(setup_params, columns=['value'], dtype=float, orient='index')
